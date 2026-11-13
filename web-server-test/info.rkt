@@ -8,7 +8,8 @@
                      "htdp-lib"
                      "rackunit-lib"
                      "web-server-lib"
-                     "net-cookies"))
+                     "net-cookies"
+                     "net-lib"))
 (define update-implies '("web-server-lib"))
 
 (define pkg-desc "tests for \"web-server\"")

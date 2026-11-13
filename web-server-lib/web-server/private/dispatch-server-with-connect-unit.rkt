@@ -152,10 +152,18 @@
   (define-values (ip op)
     (dispatch-server-connect:port->real-ports i-ip i-op))
 
+  ;; `read-request' asks for the addresses on every request, but they
+  ;; cannot change during a connection, so ask the OS only once.
+  (define connection-addresses #f)
   (define (port-addresses some-ip)
-    (if (eq? ip some-ip)
-        (real-port-addresses i-ip)
-        (real-port-addresses ip)))
+    (cond
+      [(eq? ip some-ip)
+       (unless connection-addresses
+         (set! connection-addresses
+               (call-with-values (lambda () (real-port-addresses i-ip)) list)))
+       (apply values connection-addresses)]
+      [else
+       (real-port-addresses ip)]))
 
   (define conn
     (new-connection cm ip op (current-custodian) #f))

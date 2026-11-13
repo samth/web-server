@@ -1,9 +1,13 @@
 #lang racket/base
 
 (require net/http-client
+         net/tcp-sig
+         (prefix-in raw: net/tcp-unit)
          racket/async-channel
          racket/port
          racket/promise
+         (prefix-in racket: racket/tcp)
+         racket/unit
          rackunit
          version/utils
          web-server/http
@@ -16,6 +20,7 @@
 
 (define (call-with-web-server
          #:limits [limits (make-safety-limits #:shutdown-grace-period 5)]
+         #:tcp@ [tcp@ raw:tcp@]
          handler proc)
   (define confirmation-ch
     (make-async-channel))
@@ -24,7 +29,8 @@
      #:port 0
      #:dispatch (dispatch/servlet handler)
      #:confirmation-channel confirmation-ch
-     #:safety-limits limits))
+     #:safety-limits limits
+     #:tcp@ tcp@))
   (define port-or-exn
     (sync confirmation-ch))
   (when (exn:fail? port-or-exn)
@@ -61,6 +67,39 @@
 (define serve-tests
   (test-suite
    "serve"
+
+   (test-case "asks for a connection's addresses once"
+     (define address-calls 0)
+     (define-unit counting-tcp@
+       (import)
+       (export tcp^)
+       (define (tcp-addresses p [port-numbers? #f])
+         (set! address-calls (add1 address-calls))
+         (racket:tcp-addresses p port-numbers?))
+       (define tcp-connect racket:tcp-connect)
+       (define tcp-connect/enable-break racket:tcp-connect/enable-break)
+       (define tcp-listen racket:tcp-listen)
+       (define tcp-accept racket:tcp-accept)
+       (define tcp-accept/enable-break racket:tcp-accept/enable-break)
+       (define tcp-accept-ready? racket:tcp-accept-ready?)
+       (define tcp-close racket:tcp-close)
+       (define tcp-listener? racket:tcp-listener?)
+       (define tcp-abandon-port racket:tcp-abandon-port))
+     (call-with-web-server
+      #:tcp@ counting-tcp@
+      (lambda (req)
+        (response/full 200 #"OK" (current-seconds) #"text/plain" null
+                       (list (string->bytes/utf-8 (request-client-ip req)))))
+      (lambda (port _stop)
+        (define hc (http-conn-open "127.0.0.1" #:port port))
+        (for ([_ (in-range 3)])
+          (define-values (status _headers in)
+            (http-conn-sendrecv! hc "/"))
+          (check-equal? status #"HTTP/1.1 200 OK")
+          (check-equal? (port->bytes in) #"127.0.0.1"))
+        (http-conn-close! hc)
+        ;; one call for the listener's port and one for the connection
+        (check-equal? address-calls 2))))
 
    (test-suite
     "graceful shutdown"
