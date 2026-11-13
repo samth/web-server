@@ -121,8 +121,8 @@
      (response-headers bresp)
      [#"Connection"        (and (connection-close? conn) #"close")]
      [#"Content-Type"      (response-mime bresp)]
-     [#"Date"              (seconds->gmt-bytes (current-seconds))]
-     [#"Last-Modified"     (seconds->gmt-bytes (response-seconds bresp))]
+     [#"Date"              (seconds->gmt-bytes/cached (current-seconds))]
+     [#"Last-Modified"     (seconds->gmt-bytes/cached (response-seconds bresp))]
      [#"Server"            #"Racket"]
      [#"Transfer-Encoding" (and chunked? #"chunked")]))
 
@@ -225,8 +225,25 @@
     (write-zero-padded! t 23 (date-second d))
     (bytes-copy! t 26 #"GMT")))
 
+; seconds->gmt-bytes/cached : exact-integer -> bytes
+; Like `seconds->gmt-bytes', but remembers the most recent result. Most
+; responses carry a Date and a Last-Modified header for the current second,
+; so the same date is formatted many times in a row. The cache is a single
+; immutable pair, so threads racing to update it still read a matching
+; second and date; the result is immutable because it is shared.
+(define gmt-bytes-cache (cons #f #""))
+(define (seconds->gmt-bytes/cached s)
+  (define cache gmt-bytes-cache)
+  (cond
+    [(eqv? s (car cache)) (cdr cache)]
+    [else
+     (define bs (bytes->immutable-bytes (seconds->gmt-bytes s)))
+     (set! gmt-bytes-cache (cons s bs))
+     bs]))
+
 (module+ testing
-  (provide seconds->gmt-bytes))
+  (provide seconds->gmt-bytes
+           seconds->gmt-bytes/cached))
 
 (define-syntax-rule (write-zero-padded! dest dest-start e)
   (let ([n e])

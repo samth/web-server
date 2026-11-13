@@ -208,6 +208,31 @@
     (seconds->gmt-bytes (+ (* 90 86400) (* 13 3600) 620))
     #"Wed, 01 Apr 1970 13:10:20 GMT")))
 
+(define seconds->gmt-bytes/cached-tests
+  (test-suite
+   "seconds->gmt-bytes/cached"
+
+   (test-case "agrees with seconds->gmt-bytes on repeated and changing seconds"
+     (for ([s (in-list (list 0 0 86400 86400 0 1 2 2 (+ (* 90 86400) 977)
+                             (current-seconds) (current-seconds)))])
+       (check-equal? (seconds->gmt-bytes/cached s)
+                     (seconds->gmt-bytes s))))
+
+   (test-case "returns immutable bytes that it shares"
+     (define s (+ (* 30 86400) 3600 193))
+     (define a (seconds->gmt-bytes/cached s))
+     (check-true (immutable? a))
+     (check-eq? (seconds->gmt-bytes/cached s) a))
+
+   (test-case "a response's Date and Last-Modified can differ"
+     (define-values (c i o) (make-mock-connection #""))
+     (output-response c (response/full 200 #"OK" 0 #f '() '()))
+     (define out (get-output-bytes o))
+     (check-true
+      (regexp-match? #rx#"\r\nLast-Modified: Thu, 01 Jan 1970 00:00:00 GMT\r\n" out))
+     (check-false
+      (regexp-match? #rx#"\r\nDate: Thu, 01 Jan 1970" out)))))
+
 (define response-tests
   (test-suite
    "HTTP Responses"
@@ -217,6 +242,8 @@
    output-response/method-tests
 
    seconds->gmt-bytes-tests
+
+   seconds->gmt-bytes/cached-tests
 
    (let ()
      (define tmp-file (make-temporary-file))
