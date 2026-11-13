@@ -425,11 +425,28 @@
                 (close-output-port out)))]))
        converted-ranges))
 
+;; Ranges up to this many bytes are read and written in one step. Larger
+;; ranges are copied by a limited port while a thread extends the send
+;; timeout as the copy makes progress.
+(define small-range-size 65536)
+
 ;; output-file-range : connection file-input-port integer integer -> void
 ;;
 ;; start must be inclusive; end must be exclusive.
 (define (output-file-range conn input start end)
   (file-position input start)
+  (if (<= (- end start) small-range-size)
+      (output-small-file-range conn input (- end start))
+      (output-large-file-range conn input start end)))
+
+;; A small range needs no watcher thread, limited port or custodian: the
+;; send timeout that the caller has just reset covers the single write.
+(define (output-small-file-range conn input len)
+  (define bs (read-bytes len input))
+  (unless (eof-object? bs)
+    (write-bytes bs (connection-o-port conn))))
+
+(define (output-large-file-range conn input start end)
   (define custodian (make-custodian))
   (parameterize ([current-custodian custodian])
     (define limited-input (make-limited-input-port input (- end start) #f))

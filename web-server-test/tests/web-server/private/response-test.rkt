@@ -271,6 +271,26 @@
                    (output output-file tmp-file #"GET" #"text/html" '((10 . 19)))
                    #"HTTP/1.1 206 Partial content\r\nDate: REDACTED GMT\r\nLast-Modified: REDACTED GMT\r\nServer: Racket\r\nContent-Type: text/html\r\nAccept-Ranges: bytes\r\nContent-Length: 10\r\nContent-Range: bytes 10-19/81\r\n\r\nd><title>A")
 
+      (let ([big-file (make-temporary-file)]
+            [content (apply bytes (for/list ([i (in-range 200000)]) (+ 32 (modulo i 90))))])
+        (call-with-output-file big-file (λ (o) (write-bytes content o)) #:exists 'truncate/replace)
+        (define (body-of bs) (cadr (regexp-match #rx#"\r\n\r\n(.*)$" bs)))
+        (test-suite
+         "files above and below the single-copy size"
+         (test-equal? "(get) whole large file"
+                      (body-of (output output-file big-file #"GET" #"text/plain" #f))
+                      content)
+         (test-equal? "(get) large range"
+                      (body-of (output output-file big-file #"GET" #"text/plain" '((100 . 150099))))
+                      (subbytes content 100 150100))
+         (test-equal? "(get) small range of a large file"
+                      (body-of (output output-file big-file #"GET" #"text/plain" '((70000 . 70099))))
+                      (subbytes content 70000 70100))
+         (test-equal? "(get) multiple ranges of a large file"
+                      (regexp-match* #rx#"Content-Range: [^\r]*"
+                                     (output output-file/boundary big-file #"GET" #"text/plain" '((0 . 9) (100000 . 199999)) #"B"))
+                      '(#"Content-Range: bytes 0-9/200000" #"Content-Range: bytes 100000-199999/200000"))))
+
       (test-equi? "(get) multiple ranges"
                    (output output-file/boundary tmp-file #"GET" #"text/html" '((10 . 19) (30 . 39) (50 . 59)) #"BOUNDARY")
                    #"HTTP/1.1 206 Partial content\r\nDate: REDACTED GMT\r\nLast-Modified: REDACTED GMT\r\nServer: Racket\r\nContent-Type: multipart/byteranges; boundary=BOUNDARY\r\nAccept-Ranges: bytes\r\nContent-Length: 266\r\n\r\n--BOUNDARY\r\nContent-Type: text/html\r\nContent-Range: bytes 10-19/81\r\n\r\nd><title>A\r\n\r\n--BOUNDARY\r\nContent-Type: text/html\r\nContent-Range: bytes 30-39/81\r\n\r\ntle></head\r\n\r\n--BOUNDARY\r\nContent-Type: text/html\r\nContent-Range: bytes 50-59/81\r\n\r\ne's some c\r\n\r\n--BOUNDARY--\r\n")
