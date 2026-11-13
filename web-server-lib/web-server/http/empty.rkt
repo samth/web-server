@@ -24,7 +24,7 @@
          (append hdrs (map cookie->header cooks)))
    (λ (out) (write-bytes #"" out))))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [response/empty
   (()
    (#:code response-code/c

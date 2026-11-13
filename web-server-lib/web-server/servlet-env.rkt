@@ -1,6 +1,7 @@
 ; Derived from plai/web/server, which was based on an older version of this
 ; Also derived from planet/untyped/instaservlet
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          racket/list
          racket/serialize
@@ -8,24 +9,24 @@
          (only-in racket/tcp listen-port-number?)
          (for-syntax racket/base))
 (require net/url
-         web-server/managers/lru
-         web-server/managers/manager
+         (unchecked-in web-server/managers/lru)
+         (unchecked-in web-server/managers/manager)
          web-server/configuration/namespace
-         web-server/http
+         (unchecked-in web-server/http)
          web-server/stuffers
          web-server/configuration/responders
          web-server/safety-limits
-         web-server/private/mime-types
-         web-server/servlet/setup
-         web-server/servlet/servlet-structs
-         web-server/servlet-dispatch
-         (prefix-in lift: web-server/dispatchers/dispatch-lift)
-         (prefix-in fsmap: web-server/dispatchers/filesystem-map)
-         (prefix-in sequencer: web-server/dispatchers/dispatch-sequencer)
-         (prefix-in files: web-server/dispatchers/dispatch-files)
-         (prefix-in filter: web-server/dispatchers/dispatch-filter)
-         (prefix-in servlets: web-server/dispatchers/dispatch-servlets)
-         (prefix-in log: web-server/dispatchers/dispatch-logresp))
+         (unchecked-in web-server/private/mime-types)
+         (unchecked-in web-server/servlet/setup)
+         (unchecked-in web-server/servlet/servlet-structs)
+         (unchecked-in web-server/servlet-dispatch)
+         (prefix-in lift: (unchecked-in web-server/dispatchers/dispatch-lift))
+         (prefix-in fsmap: (unchecked-in web-server/dispatchers/filesystem-map))
+         (prefix-in sequencer: (unchecked-in web-server/dispatchers/dispatch-sequencer))
+         (prefix-in files: (unchecked-in web-server/dispatchers/dispatch-files))
+         (prefix-in filter: (unchecked-in web-server/dispatchers/dispatch-filter))
+         (prefix-in servlets: (unchecked-in web-server/dispatchers/dispatch-servlets))
+         (prefix-in log: (unchecked-in web-server/dispatchers/dispatch-logresp)))
 
 (define (quit-server sema)
   (lift:make
@@ -40,7 +41,7 @@
 
 (define-runtime-path default-web-root "default-web-root")
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [serve/servlet (((request? . -> . can-be-response?))
                  (#:connection-close? boolean?
                   #:command-line? boolean?

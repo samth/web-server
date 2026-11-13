@@ -1,9 +1,10 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/cmdline
          racket/unit
          web-server/private/dispatch-server-sig)
 (require web-server/configuration/configuration-table
-         (except-in web-server/web-server serve)
+         (except-in (unchecked-in web-server/web-server) serve)
          web-server/web-config-unit)
 
 ; this is used by launchers

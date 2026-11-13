@@ -1,4 +1,5 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require net/base64
          net/cookies/common
@@ -8,13 +9,13 @@
          racket/random
          racket/contract
          racket/bool
-         (except-in web-server/http
+         (except-in (unchecked-in web-server/http)
                     make-cookie)
          web-server/stuffers/hmac-sha1
-         web-server/private/util)
+         (unchecked-in web-server/private/util))
 
 (provide
- (contract-out
+ (contract-out #:unprotected-submodule unchecked
   [make-secret-salt/file
    (-> path-string?
        bytes?)]

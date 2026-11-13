@@ -1,7 +1,8 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
-         web-server/http/request-structs
-         "status-code.rkt")
+         (unchecked-in web-server/http/request-structs)
+         (unchecked-in web-server/http/status-code))
 
 (module+ test
   (require rackunit))
@@ -78,7 +79,7 @@
   (integer-in 100 999))
 
 (provide response-code/c)
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [struct response
          ([code response-code/c]
           [message bytes?]

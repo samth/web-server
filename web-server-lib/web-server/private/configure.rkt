@@ -1,4 +1,5 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require web-server/servlet
          net/url
          (except-in racket/list
@@ -8,7 +9,7 @@
                   make-directory*)
          web-server/configuration/configuration-table-structs
          web-server/configuration/configuration-table
-         web-server/private/util
+         (unchecked-in web-server/private/util)
          racket/runtime-path)
 
 (define-runtime-path default-web-root

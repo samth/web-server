@@ -9,7 +9,8 @@
          "url-param-test.rkt"
          "mod-map-test.rkt"
          "gzip-test.rkt"
-         "util-test.rkt")
+         "util-test.rkt"
+         "unchecked-test.rkt")
 (provide all-private-tests)
 
 (define all-private-tests
@@ -24,4 +25,5 @@
    request-tests
    response-tests   
    url-param-tests
-   util-tests))
+   util-tests
+   unchecked-tests))

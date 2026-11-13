@@ -1,17 +1,18 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/list
          net/url
          racket/contract)
-(require web-server/dispatchers/dispatch
-         web-server/private/util
+(require (unchecked-in web-server/dispatchers/dispatch)
+         (unchecked-in web-server/private/util)
          web-server/configuration/responders
-         web-server/http
-         web-server/http/response)
+         (unchecked-in web-server/http)
+         (unchecked-in web-server/http/response))
 
 (define denied?/c (request? . -> . (or/c false/c string?)))
 (define authorized?/c (string? (or/c false/c bytes?) (or/c false/c bytes?) . -> . (or/c false/c string?)))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [interface-version dispatcher-interface-version/c]
  [denied?/c contract?]
  [make (->* (denied?/c)

@@ -1,14 +1,15 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require net/cookies/common
          net/cookies/server
-         web-server/http/request-structs
+         (unchecked-in web-server/http/request-structs)
          racket/contract
          racket/match
          racket/date
          )
 
-(provide (contract-out
+(provide (contract-out #:unprotected-submodule unchecked
           [cookie->header (-> cookie?
                               header?)]
           [rename make-cookie* make-cookie

@@ -1,9 +1,10 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract)
-(require web-server/dispatchers/dispatch
-         web-server/private/web-server-structs
-         web-server/private/connection-manager)
-(provide/contract
+(require (unchecked-in web-server/dispatchers/dispatch)
+         (unchecked-in web-server/private/web-server-structs)
+         (unchecked-in web-server/private/connection-manager))
+(provide/contract #:unprotected-submodule unchecked
  [make-gc-thread (integer? . -> . thread?)]
  [interface-version dispatcher-interface-version/c]
  [make (-> dispatcher/c)])

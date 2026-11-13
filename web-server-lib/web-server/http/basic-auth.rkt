@@ -1,8 +1,9 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          racket/match
          net/base64
-         web-server/http/request-structs)
+         (unchecked-in web-server/http/request-structs))
 
 (define (request->basic-credentials req)
   (define headers (request-headers/raw req))
@@ -26,6 +27,6 @@
 (define (make-basic-auth-header realm)
   (make-header #"WWW-Authenticate" (string->bytes/utf-8 (format "Basic realm=\"~a\"" realm))))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [make-basic-auth-header (string? . -> . header?)]
  [request->basic-credentials (request? . -> . (or/c false/c (cons/c bytes? bytes?)))])

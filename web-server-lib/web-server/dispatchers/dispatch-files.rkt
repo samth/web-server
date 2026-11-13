@@ -1,17 +1,18 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require net/url
          racket/match
          racket/list
          racket/contract
          racket/bool)
 
-(require web-server/dispatchers/dispatch
-         web-server/private/util
-         web-server/http
-         web-server/http/response
-         web-server/dispatchers/filesystem-map)
+(require (unchecked-in web-server/dispatchers/dispatch)
+         (unchecked-in web-server/private/util)
+         (unchecked-in web-server/http)
+         (unchecked-in web-server/http/response)
+         (unchecked-in web-server/dispatchers/filesystem-map))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [interface-version dispatcher-interface-version/c]
  [read-range-header (-> (listof header?) (or/c (listof pair?) false/c))]
  [make

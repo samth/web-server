@@ -8,6 +8,6 @@
 (define (make-servlet-custodian)
   (make-custodian (current-server-custodian)))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [current-server-custodian (parameter/c custodian?)]
  [make-servlet-custodian (-> custodian?)])

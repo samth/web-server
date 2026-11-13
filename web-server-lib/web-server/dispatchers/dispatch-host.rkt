@@ -1,11 +1,12 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          racket/match
          net/url
-         web-server/http
-         web-server/private/util
-         web-server/dispatchers/dispatch)
-(provide/contract
+         (unchecked-in web-server/http)
+         (unchecked-in web-server/private/util)
+         (unchecked-in web-server/dispatchers/dispatch))
+(provide/contract #:unprotected-submodule unchecked
  [interface-version dispatcher-interface-version/c]
  [make ((symbol? . -> . dispatcher/c) . -> . dispatcher/c)])
 

@@ -1,10 +1,11 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          racket/match
          racket/promise)
-(require "util.rkt"
-         web-server/http)
-(provide/contract
+(require (unchecked-in web-server/private/util)
+         (unchecked-in web-server/http))
+(provide/contract #:unprotected-submodule unchecked
  [read-mime-types (path-string? . -> . (hash/c symbol? bytes?))]
  [make-path->mime-type (path-string? . -> . (path? . -> . (or/c false/c bytes?)))])
 

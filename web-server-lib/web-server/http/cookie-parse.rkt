@@ -1,13 +1,14 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
-(require web-server/http/request-structs
+(require (unchecked-in web-server/http/request-structs)
          net/cookies/common
          net/cookies/server
-         web-server/private/util
+         (unchecked-in web-server/private/util)
          racket/match
          racket/contract)
 
-(provide (contract-out
+(provide (contract-out #:unprotected-submodule unchecked
           [struct client-cookie 
             ([name (and/c string? cookie-name?)]
              [value (and/c string? cookie-value?)]

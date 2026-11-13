@@ -1,16 +1,17 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require net/url
          racket/contract
          racket/date
          (prefix-in srfi-date: srfi/19)
-         web-server/dispatchers/dispatch
-         web-server/http
+         (unchecked-in web-server/dispatchers/dispatch)
+         (unchecked-in web-server/http)
          "private/log.rkt")
 
 (define format-req/c (request? . -> . string?))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [format-req/c contract?]
  [log-format/c contract?]
  [log-format->format (log-format/c . -> . format-req/c)]

@@ -1,10 +1,11 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require racket/async-channel
          racket/contract
          racket/unit
-         web-server/private/connection-manager
-         web-server/private/util
+         (unchecked-in web-server/private/connection-manager)
+         (unchecked-in web-server/private/util)
          web-server/safety-limits)
 
 (define-signature dispatch-server^

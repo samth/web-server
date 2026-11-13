@@ -5,7 +5,7 @@
          (only-in racket/string
                   non-empty-string?))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [message-for-status-code
   (number? . -> . (or/c false/c non-empty-string?))]
  [DEFAULT-STATUS-MESSAGE

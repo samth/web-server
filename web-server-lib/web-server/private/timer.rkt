@@ -120,7 +120,7 @@
                     (* 1000 secs))))
 
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [timer-manager? (-> any/c boolean?)]
  [struct timer ([tm timer-manager?]
                 [deadline number?]

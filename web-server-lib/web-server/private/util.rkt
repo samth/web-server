@@ -26,8 +26,6 @@
 ;;   space.  Also, fails on (bytes-ci=? #"\277" #"\277"), and a trivial fix
 ;;   would still fail on (bytes-ci=? #"\276\277" #"\277\276")
 
-(provide/contract
- [bytes-ci=? (bytes? bytes? . -> . boolean?)])
 
 (module+ test
   (require rackunit)
@@ -38,8 +36,6 @@
 (define path-piece?
   (or/c path-string? (symbols 'up 'same)))
 
-(provide/contract
- [path-piece? predicate/c])
 
 ;; --
 
@@ -49,9 +45,6 @@
   (raise (make-exn:fail:network (format "~a: ~a" src (apply format fmt args))
                                 (current-continuation-marks))))
 
-(provide/contract
- [network-error (->* [symbol? string?] [] #:rest list? void?)]
- [exn->string (-> any/c string?)])
 
 ;; --
 
@@ -99,11 +92,6 @@
 ;;   better for both.  Also, I find it questionable to return the current
 ;;   directory in the first case.
 
-(provide/contract
- [explode-path* (path-string? . -> . (listof path-piece?))]
- [path-without-base (path-string? path-string? . -> . (listof path-piece?))]
- [directory-part (path-string? . -> . path?)]
- [build-path-unless-absolute (path-string? path-string? . -> . path?)])
 
 ;; --
 
@@ -125,9 +113,6 @@
 ;;   (format "~s" v), and the fact that using the resulting string for printout
 ;;   will get the same result.
 
-(provide/contract
- [read/bytes (bytes? . -> . printable/c)]
- [write/bytes (printable/c . -> . bytes?)])
 
 ;; --
 
@@ -158,16 +143,9 @@
 ;;   (Which makes me think that this is (compose string->symbol string-downcase
 ;;   symbol->string))
 
-(provide/contract
- [lowercase-symbol! ((or/c string? bytes?) . -> . symbol?)]
- [read/string (string? . -> . serializable?)]
- [write/string (serializable? . -> . string?)])
 
 ;; --
 
-(provide/contract
- [url-replace-path (((listof path/param?) . -> . (listof path/param?)) url? . -> . url?)]
- [url-path->string ((listof path/param?) . -> . string?)])
 
 ;; replace-path: (url-path -> url-path) url -> url
 ;; make a new url by replacing the path part of a url with a function
@@ -217,3 +195,21 @@
 ;;   "maybe"ness), it throws away the `path/param-param's, and it accepts
 ;;   strings too (which makes me wonder how is this related to the url
 ;;   library).
+
+(provide/contract
+ #:unprotected-submodule unchecked
+ [bytes-ci=? (bytes? bytes? . -> . boolean?)]
+ [path-piece? predicate/c]
+ [network-error (->* [symbol? string?] [] #:rest list? void?)]
+ [exn->string (-> any/c string?)]
+ [explode-path* (path-string? . -> . (listof path-piece?))]
+ [path-without-base (path-string? path-string? . -> . (listof path-piece?))]
+ [directory-part (path-string? . -> . path?)]
+ [build-path-unless-absolute (path-string? path-string? . -> . path?)]
+ [read/bytes (bytes? . -> . printable/c)]
+ [write/bytes (printable/c . -> . bytes?)]
+ [lowercase-symbol! ((or/c string? bytes?) . -> . symbol?)]
+ [read/string (string? . -> . serializable?)]
+ [write/string (serializable? . -> . string?)]
+ [url-replace-path (((listof path/param?) . -> . (listof path/param?)) url? . -> . url?)]
+ [url-path->string ((listof path/param?) . -> . string?)])

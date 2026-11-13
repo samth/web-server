@@ -1,10 +1,11 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require racket/contract
          racket/list
-         web-server/dispatchers/dispatch
-         web-server/http
-         web-server/http/response
+         (unchecked-in web-server/dispatchers/dispatch)
+         (unchecked-in web-server/http)
+         (unchecked-in web-server/http/response)
          "private/log.rkt"
          (submod web-server/dispatchers/dispatch-log private))
 
@@ -12,7 +13,7 @@
   (or/c (-> request? string?)
         (-> request? response? string?)))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [format-reqresp/c contract?]
  [log-format/c contract?]
  [log-format->format (log-format/c . -> . format-reqresp/c)]

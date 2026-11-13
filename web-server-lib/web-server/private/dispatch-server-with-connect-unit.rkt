@@ -1,12 +1,13 @@
 #lang racket/unit
+(require web-server/private/unchecked)
 
 (require net/tcp-sig
          racket/async-channel
          racket/match
          (submod "../safety-limits.rkt" private)
-         "connection-manager.rkt"
+         (unchecked-in web-server/private/connection-manager)
          "dispatch-server-sig.rkt"
-         "web-server-structs.rkt")
+         (unchecked-in web-server/private/web-server-structs))
 
 ;; ****************************************
 (import tcp^

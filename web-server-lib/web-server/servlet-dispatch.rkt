@@ -1,6 +1,7 @@
 ;; Derived from plai/web/server, which was based on an older version
 ;; of this Also derived from planet/untyped/instaservlet
 #lang racket/base
+(require web-server/private/unchecked)
 (require (prefix-in net: net/sendurl)
          racket/match
          racket/local
@@ -11,23 +12,23 @@
          racket/unit
          racket/serialize
          net/url)
-(require web-server/web-server
-         web-server/managers/lru
-         web-server/managers/manager
+(require (unchecked-in web-server/web-server)
+         (unchecked-in web-server/managers/lru)
+         (unchecked-in web-server/managers/manager)
          web-server/configuration/namespace
          web-server/configuration/responders
-         web-server/http
+         (unchecked-in web-server/http)
          web-server/stuffers
-         web-server/servlet/setup
-         web-server/servlet/servlet-structs
-         web-server/dispatchers/dispatch
+         (unchecked-in web-server/servlet/setup)
+         (unchecked-in web-server/servlet/servlet-structs)
+         (unchecked-in web-server/dispatchers/dispatch)
          web-server/safety-limits
-         (prefix-in filter: web-server/dispatchers/dispatch-filter)
-         (prefix-in servlets: web-server/dispatchers/dispatch-servlets))
+         (prefix-in filter: (unchecked-in web-server/dispatchers/dispatch-filter))
+         (prefix-in servlets: (unchecked-in web-server/dispatchers/dispatch-servlets)))
 
 (define send-url (make-parameter net:send-url))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [dispatch/servlet (((request? . -> . can-be-response?))
                     (#:regexp regexp?
                      #:current-directory path-string?

@@ -3,7 +3,7 @@
          file/gzip
          file/gunzip)
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [gzip/bytes (bytes? . -> . bytes?)]
  [gunzip/bytes (bytes? . -> . bytes?)])
 

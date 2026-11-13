@@ -1,31 +1,25 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          racket/match
          racket/serialize
-         web-server/managers/manager
-         web-server/managers/timeouts
-         web-server/managers/none
+         (unchecked-in web-server/managers/manager)
+         (unchecked-in web-server/managers/timeouts)
+         (unchecked-in web-server/managers/none)
          web-server/lang/stuff-url
          web-server/stuffers/stuffer
          (only-in web-server/lang/web
                   initialize-servlet
                   make-stateless-servlet)
-         web-server/http
-         web-server/servlet/web
+         (unchecked-in web-server/http)
+         (unchecked-in web-server/servlet/web)
          web-server/configuration/namespace
-         web-server/servlet/servlet-structs
-         web-server/private/web-server-structs
-         web-server/private/servlet
-         web-server/private/util)
+         (unchecked-in web-server/servlet/servlet-structs)
+         (unchecked-in web-server/private/web-server-structs)
+         (unchecked-in web-server/private/servlet)
+         (unchecked-in web-server/private/util))
 
 (define path->servlet/c (path? . -> . servlet?))
-(provide/contract
- [path->servlet/c contract?]
- [make-default-path->servlet
-  (->* ()
-       (#:make-servlet-namespace make-servlet-namespace/c
-                                 #:timeouts-default-servlet number?)
-       path->servlet/c)])
 
 (define (v0.response->v1.lambda response response-path)
   (lambda (initial-request)
@@ -115,11 +109,6 @@
   (append common-module-specs
           servlet-module-specs
           lang-module-specs))
-(provide/contract
- [make-v1.servlet (path-string? integer? (request? . -> . can-be-response?) . -> . servlet?)]
- [make-v2.servlet (path-string? manager? (request? . -> . can-be-response?) . -> . servlet?)]
- [make-stateless.servlet (path-string? (stuffer/c serializable? bytes?) manager? (request? . -> . can-be-response?) . -> . servlet?)]
- [default-module-specs (listof (or/c resolved-module-path? module-path?))])
 
 (define (make-default-path->servlet #:make-servlet-namespace [make-servlet-namespace (make-make-servlet-namespace)]
                                     #:timeouts-default-servlet [timeouts-default-servlet 30])
@@ -185,3 +174,16 @@
                                        pos-blame neg-blame
                                        path-string loc)
                              a-path))])))))
+
+(provide/contract
+ #:unprotected-submodule unchecked
+ [path->servlet/c contract?]
+ [make-default-path->servlet
+  (->* ()
+       (#:make-servlet-namespace make-servlet-namespace/c
+                                 #:timeouts-default-servlet number?)
+       path->servlet/c)]
+ [make-v1.servlet (path-string? integer? (request? . -> . can-be-response?) . -> . servlet?)]
+ [make-v2.servlet (path-string? manager? (request? . -> . can-be-response?) . -> . servlet?)]
+ [make-stateless.servlet (path-string? (stuffer/c serializable? bytes?) manager? (request? . -> . can-be-response?) . -> . servlet?)]
+ [default-module-specs (listof (or/c resolved-module-path? module-path?))])

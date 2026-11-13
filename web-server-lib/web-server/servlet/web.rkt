@@ -1,18 +1,19 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          net/url)
-(require web-server/managers/manager
-         web-server/private/util
-         web-server/private/servlet
+(require (unchecked-in web-server/managers/manager)
+         (unchecked-in web-server/private/util)
+         (unchecked-in web-server/private/servlet)
          web-server/servlet/web-cells
-         web-server/servlet/servlet-structs
-         web-server/http)
+         (unchecked-in web-server/servlet/servlet-structs)
+         (unchecked-in web-server/http))
 
 (provide servlet-prompt)
 
 ;; ********************************************************************************
 ;; Parameter Embedding
-(require web-server/private/url-param)
+(require (unchecked-in web-server/private/url-param))
 
 ;; embed-ids: (list number number number) url -> string
 (define (embed-ids v u)
@@ -31,27 +32,9 @@
       [else
        #f])))
 
-(provide/contract
- [continuation-url? (url? . -> . (or/c false/c (list/c number? number? number?)))])
 
 ;; ********************************************************************************
 
-(provide/contract
- [current-servlet-continuation-expiration-handler 
-  (parameter/c 
-   (or/c false/c
-         (request? . -> . can-be-response?)))]
- [redirect/get (() (#:headers (listof header?)) . ->* . request?)]
- [redirect/get/forget (() (#:headers (listof header?)) . ->* . request?)]
- [adjust-timeout! (number? . -> . void?)]
- [clear-continuation-table! (-> void?)]
- [send/back (can-be-response? . -> . void?)]
- [send/finish (can-be-response? . -> . void?)]
- [send/forward ((string? . -> . can-be-response?) . -> . request?)]
- [send/suspend ((string? . -> . can-be-response?) . -> . request?)]
- [send/suspend/dispatch ((((request? . -> . any) . -> . string?) . -> . can-be-response?) . -> . any)]
- [send/suspend/url ((url? . -> . can-be-response?) . -> . request?)]
- [send/suspend/url/dispatch ((((request? . -> . any) . -> . url?) . -> . can-be-response?) . -> . any)])
 
 ;; ************************************************************
 ;; EXPORTS
@@ -166,6 +149,23 @@
     (thunk)))
 
 (provide/contract
+ #:unprotected-submodule unchecked
+ [continuation-url? (url? . -> . (or/c false/c (list/c number? number? number?)))]
+ [current-servlet-continuation-expiration-handler 
+  (parameter/c 
+   (or/c false/c
+         (request? . -> . can-be-response?)))]
+ [redirect/get (() (#:headers (listof header?)) . ->* . request?)]
+ [redirect/get/forget (() (#:headers (listof header?)) . ->* . request?)]
+ [adjust-timeout! (number? . -> . void?)]
+ [clear-continuation-table! (-> void?)]
+ [send/back (can-be-response? . -> . void?)]
+ [send/finish (can-be-response? . -> . void?)]
+ [send/forward ((string? . -> . can-be-response?) . -> . request?)]
+ [send/suspend ((string? . -> . can-be-response?) . -> . request?)]
+ [send/suspend/dispatch ((((request? . -> . any) . -> . string?) . -> . can-be-response?) . -> . any)]
+ [send/suspend/url ((url? . -> . can-be-response?) . -> . request?)]
+ [send/suspend/url/dispatch ((((request? . -> . any) . -> . url?) . -> . can-be-response?) . -> . any)]
  [with-errors-to-browser
   ((can-be-response? . -> . request?)
    (-> any)

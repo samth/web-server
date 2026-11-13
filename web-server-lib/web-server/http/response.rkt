@@ -1,15 +1,16 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require file/md5
          racket/contract
          racket/port
          racket/list
          racket/match
-         web-server/private/connection-manager
+         (unchecked-in web-server/private/connection-manager)
          (submod web-server/private/connection-manager private)
          (submod web-server/http/request-structs private)
          (submod web-server/http/response-structs private)
-         web-server/private/util
+         (unchecked-in web-server/private/util)
          syntax/parse/define
          (for-syntax racket/base
                      racket/list
@@ -17,7 +18,7 @@
                      syntax/parse/lib/function-header))
 
 (provide
- (contract-out
+ (contract-out #:unprotected-submodule unchecked
   [print-headers
    (output-port? (listof header?) . -> . any)]
   [output-response

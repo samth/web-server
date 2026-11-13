@@ -1,13 +1,14 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require net/url
          racket/list
          racket/match
          racket/contract)
-(require web-server/private/util)
+(require (unchecked-in web-server/private/util))
 (define url->path/c
   ((url?) () . ->* . (values path? (listof path-piece?))))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [url->path/c contract?]
  [make-url->path (path-string? . -> . url->path/c)]
  [make-url->valid-path (url->path/c . -> . url->path/c)]

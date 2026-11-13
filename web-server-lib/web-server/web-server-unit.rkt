@@ -1,4 +1,5 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require racket/unit
          net/tcp-sig
@@ -8,25 +9,25 @@
          (submod web-server/safety-limits private)
          web-server/private/dispatch-server-with-connect-unit
          web-server/private/dispatch-server-sig
-         web-server/private/web-server-structs
-         web-server/private/mime-types
+         (unchecked-in web-server/private/web-server-structs)
+         (unchecked-in web-server/private/mime-types)
          web-server/configuration/configuration-table-structs
-         web-server/private/cache-table
+         (unchecked-in web-server/private/cache-table)
          web-server/private/raw-dispatch-server-connect-unit
-         (prefix-in http: web-server/http/request)
-         web-server/dispatchers/dispatch
-         web-server/servlet/setup
-         (prefix-in fsmap: web-server/dispatchers/filesystem-map)
-         (prefix-in sequencer: web-server/dispatchers/dispatch-sequencer)
-         (prefix-in timeout: web-server/dispatchers/dispatch-timeout)
-         (prefix-in passwords: web-server/dispatchers/dispatch-passwords)
-         (prefix-in files: web-server/dispatchers/dispatch-files)
-         (prefix-in servlets: web-server/dispatchers/dispatch-servlets)
-         (prefix-in path-procedure: web-server/dispatchers/dispatch-pathprocedure)
-         (prefix-in log: web-server/dispatchers/dispatch-logresp)
-         (prefix-in host: web-server/dispatchers/dispatch-host)
-         (prefix-in filter: web-server/dispatchers/dispatch-filter)
-         (prefix-in lift: web-server/dispatchers/dispatch-lift))
+         (prefix-in http: (unchecked-in web-server/http/request))
+         (unchecked-in web-server/dispatchers/dispatch)
+         (unchecked-in web-server/servlet/setup)
+         (prefix-in fsmap: (unchecked-in web-server/dispatchers/filesystem-map))
+         (prefix-in sequencer: (unchecked-in web-server/dispatchers/dispatch-sequencer))
+         (prefix-in timeout: (unchecked-in web-server/dispatchers/dispatch-timeout))
+         (prefix-in passwords: (unchecked-in web-server/dispatchers/dispatch-passwords))
+         (prefix-in files: (unchecked-in web-server/dispatchers/dispatch-files))
+         (prefix-in servlets: (unchecked-in web-server/dispatchers/dispatch-servlets))
+         (prefix-in path-procedure: (unchecked-in web-server/dispatchers/dispatch-pathprocedure))
+         (prefix-in log: (unchecked-in web-server/dispatchers/dispatch-logresp))
+         (prefix-in host: (unchecked-in web-server/dispatchers/dispatch-host))
+         (prefix-in filter: (unchecked-in web-server/dispatchers/dispatch-filter))
+         (prefix-in lift: (unchecked-in web-server/dispatchers/dispatch-lift)))
 
 (provide web-server-with-connect@
          web-server@)

@@ -1,4 +1,5 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require racket/match
          net/tcp-sig
@@ -8,7 +9,7 @@
          racket/contract
          (only-in racket/tcp listen-port-number?)
          openssl
-         web-server/dispatchers/dispatch
+         (unchecked-in web-server/dispatchers/dispatch)
          web-server/safety-limits
          (submod web-server/safety-limits private)
          web-server/private/dispatch-server-sig
@@ -17,11 +18,11 @@
          web-server/web-config-sig
          web-server/web-server-sig
          web-server/web-server-unit
-         (prefix-in http: web-server/http/request)
+         (prefix-in http: (unchecked-in web-server/http/request))
          (prefix-in http/private: (submod web-server/http/request private))
-         (prefix-in http: web-server/http/response))
+         (prefix-in http: (unchecked-in web-server/http/response)))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [serve
   (->* (#:dispatch dispatcher/c)
        (#:confirmation-channel (or/c #f async-channel?)

@@ -1,7 +1,8 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
-         web-server/http/request-structs
-         web-server/servlet/servlet-structs)
+         (unchecked-in web-server/http/request-structs)
+         (unchecked-in web-server/servlet/servlet-structs))
 
 (define-struct manager (create-instance 
                         adjust-timeout!
@@ -13,7 +14,7 @@
 (define-struct (exn:fail:servlet-manager:no-instance exn:fail) (expiration-handler))
 (define-struct (exn:fail:servlet-manager:no-continuation exn:fail) (expiration-handler))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [struct manager ([create-instance ((-> void) . -> . number?)]
                   [adjust-timeout! (number? number? . -> . void)]
                   [clear-continuations! (number? . -> . void)]

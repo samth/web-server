@@ -1,9 +1,10 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract)
-(require "manager.rkt")
-(require web-server/servlet/servlet-structs
-         web-server/http)
-(provide/contract
+(require (unchecked-in web-server/managers/manager))
+(require (unchecked-in web-server/servlet/servlet-structs)
+         (unchecked-in web-server/http))
+(provide/contract #:unprotected-submodule unchecked
  [create-none-manager
   (-> 
    (or/c false/c

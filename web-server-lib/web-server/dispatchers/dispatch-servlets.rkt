@@ -1,30 +1,22 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract)
-(require web-server/servlet/setup
-         web-server/servlet/servlet-structs
-         web-server/managers/manager
-         web-server/http
-         web-server/http/response
+(require (unchecked-in web-server/servlet/setup)
+         (unchecked-in web-server/servlet/servlet-structs)
+         (unchecked-in web-server/managers/manager)
+         (unchecked-in web-server/http)
+         (unchecked-in web-server/http/response)
          net/url
-         web-server/dispatchers/dispatch
-         web-server/dispatchers/filesystem-map
+         (unchecked-in web-server/dispatchers/dispatch)
+         (unchecked-in web-server/dispatchers/filesystem-map)
          web-server/configuration/responders
-         web-server/private/connection-manager
-         web-server/private/web-server-structs
-         web-server/private/servlet
-         web-server/private/cache-table)
-(provide/contract
- [interface-version dispatcher-interface-version/c])
+         (unchecked-in web-server/private/connection-manager)
+         (unchecked-in web-server/private/web-server-structs)
+         (unchecked-in web-server/private/servlet)
+         (unchecked-in web-server/private/cache-table))
 (define interface-version 'v1)
 
 (define url->servlet/c (url? . -> . servlet?))
-(provide/contract
- [url->servlet/c contract?]
- [make-cached-url->servlet
-  (-> url->path/c
-      path->servlet/c
-      (values (() ((or/c false/c (listof url?)) (-> servlet? void?)) . ->* . void?)
-              url->servlet/c))])
 
 (define (make-cached-url->servlet         
          url->path 
@@ -51,11 +43,6 @@
                                  (lambda () (path->servlet servlet-path))))))
 
 ; -----
-(provide/contract
- [make (->* (url->servlet/c)
-            (#:responders-servlet-loading (url? any/c . -> . can-be-response?)
-                                          #:responders-servlet (url? any/c . -> . can-be-response?))
-            dispatcher/c)])
 
 (define (make url->servlet
           #:responders-servlet-loading [responders-servlet-loading servlet-loading-responder]
@@ -98,3 +85,17 @@
                   servlet-prompt)))))))
 
       (output-response/method conn (any->response maybe-response) (request-method req)))))
+
+(provide/contract
+ #:unprotected-submodule unchecked
+ [interface-version dispatcher-interface-version/c]
+ [url->servlet/c contract?]
+ [make-cached-url->servlet
+  (-> url->path/c
+      path->servlet/c
+      (values (() ((or/c false/c (listof url?)) (-> servlet? void?)) . ->* . void?)
+              url->servlet/c))]
+ [make (->* (url->servlet/c)
+            (#:responders-servlet-loading (url? any/c . -> . can-be-response?)
+                                          #:responders-servlet (url? any/c . -> . can-be-response?))
+            dispatcher/c)])

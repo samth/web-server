@@ -1,8 +1,9 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract)
-(require web-server/servlet/servlet-structs
-         web-server/managers/manager
-         web-server/http/request-structs)
+(require (unchecked-in web-server/servlet/servlet-structs)
+         (unchecked-in web-server/managers/manager)
+         (unchecked-in web-server/http/request-structs))
 
 (define servlet-prompt (make-continuation-prompt-tag 'servlet))
 (define-struct servlet (custodian namespace manager directory [handler #:mutable]))
@@ -15,7 +16,7 @@
 (define (current-servlet-manager)
   (servlet-manager (current-servlet)))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [servlet-prompt continuation-prompt-tag?]
  [struct servlet 
          ([custodian custodian?]

@@ -1,10 +1,11 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          net/url
          racket/match
          racket/list
-         "util.rkt")
-(provide/contract
+         (unchecked-in web-server/private/util))
+(provide/contract #:unprotected-submodule unchecked
  [extract-param (url? string? . -> . (or/c string? false/c))]
  [insert-param (url? string? string? . -> . url?)])
 

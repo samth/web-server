@@ -1,15 +1,16 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          racket/list
          racket/match
          xml
-         web-server/private/xexpr
+         (unchecked-in web-server/private/xexpr)
          (except-in net/cookies/server
                     make-cookie)
-         "request-structs.rkt"
-         "cookie.rkt"
-         "response-structs.rkt"
-         "status-code.rkt")
+         (unchecked-in web-server/http/request-structs)
+         (unchecked-in web-server/http/cookie)
+         (unchecked-in web-server/http/response-structs)
+         (unchecked-in web-server/http/status-code))
 
 (module+ test
   (require rackunit))
@@ -63,7 +64,7 @@
     (check-equal? 200 (response-code resp))
     (check-equal? #"Say Cheese" (response-message resp))))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [response/xexpr
   ((pretty-xexpr/c)
    (#:code response-code/c #:message (or/c #f bytes?) #:seconds real? #:mime-type (or/c #f bytes?) #:cookies (listof cookie?) #:headers (listof header?) #:preamble bytes?)

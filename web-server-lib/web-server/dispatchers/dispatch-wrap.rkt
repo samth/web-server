@@ -1,12 +1,13 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require racket/contract
-         web-server/dispatchers/dispatch
-         web-server/http/request-structs
-         web-server/http/response-structs
-         (prefix-in lift: web-server/dispatchers/dispatch-lift))
+         (unchecked-in web-server/dispatchers/dispatch)
+         (unchecked-in web-server/http/request-structs)
+         (unchecked-in web-server/http/response-structs)
+         (prefix-in lift: (unchecked-in web-server/dispatchers/dispatch-lift)))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [interface-version dispatcher-interface-version/c]
  [make (-> (-> request? response?)
            (-> request? request?)

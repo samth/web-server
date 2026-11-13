@@ -1,10 +1,11 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/port
          racket/match
          racket/contract
          net/base64
          file/md5
-         web-server/http/request-structs)
+         (unchecked-in web-server/http/request-structs))
 
 ;; Requesting
 (define (make-digest-auth-header realm private-key opaque)
@@ -188,7 +189,7 @@
     (bytes=? RESPONSE
              (string->bytes/utf-8 response))))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [make-digest-auth-header (string? string? string? . -> . header?)]
  [request->digest-credentials (request? . -> . (or/c false/c (listof (cons/c symbol? string?))))]
  [username*realm->password/c contract?]

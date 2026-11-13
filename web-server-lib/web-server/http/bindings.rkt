@@ -1,9 +1,10 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/list
          racket/contract
          racket/match
-         web-server/private/util
-         web-server/http/request-structs)
+         (unchecked-in web-server/private/util)
+         (unchecked-in web-server/http/request-structs))
 
 (define (request-headers request)
   (map (match-lambda
@@ -43,7 +44,7 @@
       #t
       #f))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [extract-binding/single (symbol? (listof (cons/c symbol? any/c)) . -> . any/c)]
  [extract-bindings (symbol? (listof (cons/c symbol? any/c)) . -> . (listof any/c))]
  [exists-binding? (symbol? (listof (cons/c symbol? any/c)) . -> . boolean?)]

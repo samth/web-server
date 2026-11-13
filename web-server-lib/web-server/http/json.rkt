@@ -29,7 +29,7 @@
    (λ (out)
      (write-json jsexpr out #:null js-null))))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [response/jsexpr
   ((jsexpr?)
    (#:code response-code/c

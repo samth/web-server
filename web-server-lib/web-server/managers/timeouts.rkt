@@ -1,11 +1,12 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/match
          racket/contract)
-(require "manager.rkt")
-(require web-server/private/timer
-         web-server/http
-         web-server/servlet/servlet-structs)
-(provide/contract
+(require (unchecked-in web-server/managers/manager))
+(require (unchecked-in web-server/private/timer)
+         (unchecked-in web-server/http)
+         (unchecked-in web-server/servlet/servlet-structs))
+(provide/contract #:unprotected-submodule unchecked
  [create-timeout-manager
   (->
    (or/c false/c

@@ -7,7 +7,7 @@
 
 (define-struct (exn:pretty exn) (xexpr))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [struct (exn:pretty exn) ([message string?]
                            [continuation-marks continuation-mark-set?]
                            [xexpr xexpr/c])]

@@ -1,13 +1,14 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          racket/match
          "../safety-limits.rkt"
          (submod "../safety-limits.rkt" private)
-         "timer.rkt")
+         (unchecked-in web-server/private/timer))
 
 (provide
  connection-manager?
- (contract-out
+ (contract-out #:unprotected-submodule unchecked
   [struct connection
     ([id integer?]
      [timer timer?]

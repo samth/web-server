@@ -1,7 +1,8 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract)
-(require web-server/private/connection-manager
-         web-server/http)
+(require (unchecked-in web-server/private/connection-manager)
+         (unchecked-in web-server/http))
 
 (define dispatcher/c
   (connection? request? . -> . any))
@@ -10,7 +11,7 @@
 (define-struct exn:dispatcher ())
 (define (next-dispatcher) (raise (make-exn:dispatcher)))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [dispatcher/c contract?]
  [dispatcher-interface-version/c contract?]
  [next-dispatcher (-> any)]

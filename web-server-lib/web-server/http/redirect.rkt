@@ -1,8 +1,9 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/contract
          (only-in racket/string non-empty-string?)
-         web-server/http/response-structs
-         web-server/http/request-structs)
+         (unchecked-in web-server/http/response-structs)
+         (unchecked-in web-server/http/request-structs))
 
 ; redirection-status = (redirection-status nat bytes)
 (struct redirection-status (code message))
@@ -30,7 +31,7 @@
                    headers)
             void))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [redirect-to
   (->* (non-empty-string?) (redirection-status? #:headers (listof header?))
        response?)]

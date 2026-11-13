@@ -1,10 +1,11 @@
 #lang racket/base
+(require web-server/private/unchecked)
 (require racket/match
          racket/contract)
-(require "manager.rkt"
-         web-server/http
-         web-server/servlet/servlet-structs)
-(provide/contract
+(require (unchecked-in web-server/managers/manager)
+         (unchecked-in web-server/http)
+         (unchecked-in web-server/servlet/servlet-structs))
+(provide/contract #:unprotected-submodule unchecked
  [create-LRU-manager 
   (->
    (or/c false/c

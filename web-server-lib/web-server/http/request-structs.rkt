@@ -1,4 +1,5 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require (for-syntax racket/base
                      racket/struct-info
@@ -9,21 +10,22 @@
          racket/port
          racket/promise
          racket/serialize
-         web-server/private/util)
+         (unchecked-in web-server/private/util))
 
 (provide
- ;; header
+ binding:file/port?
  (contract-out
+  #:unprotected-submodule unchecked
+  ;; header
   [struct header
     ([field bytes?]
      [value bytes?])]
   [headers-assq
    (-> bytes? (listof header?) (or/c #f header?))]
   [headers-assq*
-   (-> bytes? (listof header?) (or/c #f header?))])
- ;; ----------------------------------------
- ;; request
- (contract-out
+   (-> bytes? (listof header?) (or/c #f header?))]
+  ;; ----------------------------------------
+  ;; request
   [struct request ([method bytes?]
                    [uri url?]
                    [headers/raw (listof header?)]
@@ -33,11 +35,9 @@
                    [host-port number?]
                    [client-ip string?])]
   [request-bindings/raw
-   (-> request? (listof binding?))])
- ;; ----------------------------------------
- ;; binding
- binding:file/port?
- (contract-out
+   (-> request? (listof binding?))]
+  ;; ----------------------------------------
+  ;; binding
   [struct binding
     ([id bytes?])]
   [struct (binding:form binding)

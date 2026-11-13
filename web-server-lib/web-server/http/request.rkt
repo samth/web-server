@@ -1,4 +1,5 @@
 #lang racket/base
+(require web-server/private/unchecked)
 
 (require net/uri-codec
          net/url
@@ -11,8 +12,8 @@
          (submod web-server/http/request-structs private)
          web-server/safety-limits
          (submod web-server/safety-limits private)
-         web-server/private/connection-manager
-         web-server/private/util)
+         (unchecked-in web-server/private/connection-manager)
+         (unchecked-in web-server/private/util))
 
 ;;
 ;;                    **READ ME FIRST**
@@ -36,7 +37,7 @@
    (values request? boolean?)))
 
 (provide
- (contract-out
+ (contract-out #:unprotected-submodule unchecked
   ;; CAUTION: To maximize backwards compatibility for low-level
   ;; programs, `make-read-request` and `read-request`
   ;; use `(make-unlimited-safety-limits)`

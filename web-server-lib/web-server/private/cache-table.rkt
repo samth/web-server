@@ -36,7 +36,7 @@
       (lambda ()
         (hash-ref! ht entry-id entry-thunk))))))
 
-(provide/contract
+(provide/contract #:unprotected-submodule unchecked
  [rename new-cache-table make-cache-table
          (-> cache-table?)]
  [cache-table-lookup! (cache-table? symbol? (-> any/c) . -> . any/c)]
